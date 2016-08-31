@@ -9,13 +9,13 @@
 			@sf = Font.new(30)
 			@alp = 0
 			@sw = 0
-	    	@bg_img = Image.load("images/background1.png")
 	    	@title = "とびゆけ！ぷーすけ！"
 	    	@start = "please push space"
 	  	end
 
 	  	def play
-	    	Window.draw(0,0,@bg_img)
+	  		$scroll.move
+	  		$scroll.draw
 			Window.drawFont(@X,@Y,@title,@f,{:color => [255,255,0]})
 			if @sw == 0
 				@alp += 3
