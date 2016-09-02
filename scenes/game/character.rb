@@ -22,6 +22,7 @@ class Character < Sprite
 
         if self.y < 0 #天井超えない
             self.y = 0
+            @vy = 3
         end
         
         if self.y + @image.height > Window.height

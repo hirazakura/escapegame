@@ -25,6 +25,7 @@ module Game
 				@char = Character.new(400, $char_y_start)
 				@flg = false
 			end
+			
 			obj_new
 
 			if Input.keyPush?(K_RETURN)
@@ -61,47 +62,48 @@ module Game
 			end while a == @prev_wall
 			@prev_wall = a
 			case a
-			when 0 #下三角
-				8.times do |i|
-					y = 400
-					y += Needle::HEIGHT / 2 if i.odd? #奇数の時 生成場所のy座標を下へ
-					@walls << Needle.new(x + i * 100, y)
+				when 0 #下三角
+					8.times do |i|
+						y = 400
+						y += Needle::HEIGHT / 2 if i.odd? #奇数の時 生成場所のy座標を下へ
+						@walls << Needle.new(x + i * 100, y)
+					end
+				when 1 # 上三角
+					8.times do |i|
+						y = -100
+						y += Needle::HEIGHT / 2 if i.odd? #奇数の時 生成場所のｙ座標を下へ
+						needle = Needle.new(x + i * 100, y)
+						needle.reverse!
+						@walls <<  needle
+					end
+				when 2 # 上四角
+					y = -200
+					type = 1
+					@walls << Press.new(x, y, type)
+				when 3 # 下四角
+					y = 500
+					type = 2
+					@walls << Press.new(x, y, type)
 				end
-			when 1 # 上三角
-				8.times do |i|
-					y = -100
-					y += Needle::HEIGHT / 2 if i.odd? #奇数の時 生成場所のｙ座標を下へ
-					needle = Needle.new(x + i * 100, y)
-					needle.reverse!
-					@walls <<  needle
-				end
-			when 2 # 上四角
-				y = -200
-				type = 1
-				@walls << Press.new(x, y, type)
-			when 3 # 下四角
-				y = 500
-				type = 2
-				@walls << Press.new(x, y, type)
-			end
 		end
 
-		# TODO:障害物のループが必要
 		def enemys_new
-			karasus = (0..1)
-			oni = (0..1)
-			ufo = (0..1)
+			karasus = (1..2)
+			oni = (1..2)
+			ufo = (1..2)
 			x = (800..1600)
 			y = (50..550)
-			karasus = rand(karasus)
 
+			karasus = rand(karasus)
 			karasus.times do
 				@enemys << Enemy_karasu.new(rand(x),rand(y))
 			end
+
 			oni = rand(oni)
 			oni.times do
 				@enemys << Enemy_oni.new(rand(x),rand(y))
 			end
+
 			ufo = rand(ufo)
 			ufo.times do
 				@enemys << Enemy_ufo.new(rand(x),rand(y))
@@ -109,13 +111,12 @@ module Game
 		end
 		def obj_vanish
 			(@walls + @enemys + @items).each do |obj|
-				# if obj.x + obj.image.width < 0
-				# 	obj.vanish
-				# end
+				if obj.x + obj.image.width < 0
+					obj.vanish
+				end
 			end
     	end
 
-    	# TODO:アイテムのループが必要
 		def obj_new
 			flg = true
 			@walls.each do |wall|
@@ -126,10 +127,11 @@ module Game
 				end
 			end
 			wall_new if flg
-			while @items.length < 10 do
+			while @items.length <= 10 do
 				@items << Item.new(rand(800..1600), rand(600 - @ruby_img.height), @ruby_img)
 			end
-			enemys_new if @enemys.length < 5
+
+			enemys_new if flg#@enemys.length < 5
 		end
 	end
 end
